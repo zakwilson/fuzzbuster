@@ -1,7 +1,11 @@
 (ns fuzzbuster.core
   (:require [clojure.java.io :as j]
+            [fs.core :as f]
+            [useful.parallel :as p]
+            [useful.map :as m]
             clojure.main)
-  (:use fuzzbuster.sobel)
+  (:use fuzzbuster.sobel
+        [clojure.tools.cli :only [cli]])
   (:import (java.io File) (javax.imageio ImageIO) (java.awt.image BufferedImage))
   (:gen-class))
 
@@ -69,9 +73,34 @@
 (defn edge-width-file [f]
   (edge-width-img (ImageIO/read (j/as-file f))))
 
+(defn process-file [f]
+  (try [f (edge-width-file f)]
+       (catch Exception _ nil))) ; I hear it's bad style to filter out unprocessable files using exceptions. I don't care.
 
+(defn process-dir [d]
+  (into {}
+        (filter identity
+                   (p/pcollect #(process-file (str d "/" %))
+                               (f/list-dir d)))))
+
+(defn list-blurry-images [dir threshold]
+  (m/filter-keys-by-val #(> % threshold) (process-dir dir)))
 
 (defn -main
   "I don't do a whole lot."
   [& args]
-  (println "Hello, World!"))
+  (let [[options args banner]
+        (cli args
+             ["-h" "--help" "Show help" :default false :flag true]
+             ["-t" "--threshold"
+              "Threshold to detect as blurry (default 50)"
+              :parse-fn #(Integer. %)
+              :default 50])]
+    (when (:help options)
+      (println banner)
+      (System/exit 0))
+    (doall (map println (-> (list-blurry-images (if (f/directory? (first args))
+                                                  (first args)
+                                                  (str f/*cwd* "/" (first args)))
+                                                (:threshold options))
+                            sort)))))
