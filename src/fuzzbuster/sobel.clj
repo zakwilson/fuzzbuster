@@ -139,7 +139,7 @@
     (doseq [x (range width) y (range height)]
       (.setRGB
        ret x y
-       (luminance-to-greyscale
+       (luminance-to-greyscale-inline
         (if (or (= x 0) (= y 0) (= x (dec width)) (= y (dec height)))
           255
           (loop [i (int  -1) j (int -1) sumX (int 0) sumY (int 0)]
