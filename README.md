@@ -20,4 +20,6 @@ You can download a standalone jar from http://classifyr.com/~zak/fuzzbuster.jar
 
 Copyright © 2012 Zak Wilson
 
-Distributed under the Eclipse Public License, the same as Clojure.
+Portions copyright © Laurence Hyate
+
+Distributed under the Mozilla Public License
