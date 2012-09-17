@@ -6,11 +6,10 @@ Detects blurry images
 
 java -jar fuzzbuster.jar /home/me/blurry-pictures
 
-or
+java -jar fuzzzbuster.jar --help
+for options
 
-java -jar fuzzzbuster.jar -t 60 /home/me/blurry-pictures
-
-This is very preliminary and might not be very fast or accurate. What's now fuzzbuster.sobel is borrowed from [here](http://pastebin.com/auqEvM7J) - original author unknown. Please contact me if it's yours.
+Fuzzbuster actually works by detecting sharp portions of the image; an image with a shallow depth of field and an in-focus subject will not be detected as blurry. How fine-grained this effect is depends on the --sectors parameter, which is both the width and height of the grid the image is split in to for detecting sharp areas.
 
 ## Download
 
